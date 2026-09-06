@@ -4,8 +4,8 @@
 # Interactive control for the 2-DOF camera mount, using config/servos.json
 # (written by calibrate.py) to map degrees-from-center to each servo's raw ticks.
 #
-# Usage: <joint> <angle_degrees>   e.g.  "yaw 30"  or  "pitch -15"
-#        "center" moves both joints to 0
+# Usage: <joint> <angle_degrees>   e.g.  "yaw 30" / "y 30"   or  "pitch -15" / "p -15"
+#        "center" or "c" moves both joints to 0
 #        "q" quits
 
 import json
@@ -25,7 +25,9 @@ ADDR_PROFILE_ACCELERATION = 108
 
 POLL_TIMEOUT_LOOPS  = 200
 POLL_INTERVAL_SEC   = 0.02
-SETTLE_THRESHOLD_TICKS = 4   # ~0.35 deg
+SETTLE_THRESHOLD_TICKS = 8   # ~0.7 deg, loosened from 4 since a loaded joint (pitch, holding
+                             # the camera against gravity) may have a small persistent steady-
+                             # state error that never quite closes to within a tighter tolerance
 RANGE_DISPLAY_TOLERANCE_DEG = 0.05   # matches the rounding of the printed "%.1f" range
 
 
@@ -77,7 +79,7 @@ try:
         print("'%s' (ID %d) ready. Allowed range: %.1f to %.1f deg" % (name, dxl_id, low, high))
 
     alias_hint = ", ".join("'%s' for %s" % (alias, name) for alias, name in joint_aliases.items())
-    print("\nCommands: '<joint> <angle>' e.g. 'yaw 30' or 'y 30' (%s), 'center' for both to 0, 'q' to quit." %
+    print("\nCommands: '<joint> <angle>' e.g. 'yaw 30' or 'y 30' (%s), 'center' or 'c' for both to 0, 'q' to quit." %
           alias_hint)
 
     while True:
@@ -87,13 +89,13 @@ try:
         if line.lower() == 'q':
             break
 
-        if line.lower() == 'center':
+        if line.lower() in ('center', 'c'):
             targets = [(name, 0.0) for name in config]
         else:
             parts = line.split()
             joint_name = joint_aliases.get(parts[0].lower(), parts[0])
             if len(parts) != 2 or joint_name not in config:
-                print("Unrecognized command. Try '<joint> <angle>', 'center', or 'q'. Known joints: %s" %
+                print("Unrecognized command. Try '<joint> <angle>', 'center'/'c', or 'q'. Known joints: %s" %
                       list(config.keys()))
                 continue
             try:
@@ -141,10 +143,9 @@ try:
                     break
                 time.sleep(POLL_INTERVAL_SEC)
             else:
-                print("[%s] timed out waiting to reach goal" % name)
-                continue
-
-            print("[%s] now at %.1f deg" % (name, tick_to_angle(joint, present_tick)))
+                remaining_deg = tick_to_angle(joint, present_tick) - tick_to_angle(joint, goal_tick)
+                print("[%s] timed out waiting to reach goal (still %.1f deg / %d ticks away, at %.1f deg)" %
+                      (name, abs(remaining_deg), abs(goal_tick - present_tick), tick_to_angle(joint, present_tick)))
 
 finally:
     for dxl_id in enabled_ids:

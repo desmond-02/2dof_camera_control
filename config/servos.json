@@ -4,7 +4,7 @@
     "center_tick": 2540,
     "min_limit": 1515,
     "max_limit": 3542,
-    "reversed": false
+    "reversed": true
   },
   "pitch": {
     "id": 2,

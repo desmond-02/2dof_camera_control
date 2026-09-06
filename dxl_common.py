@@ -6,7 +6,7 @@
 from dynamixel_sdk import *
 
 PROTOCOL_VERSION = 2.0
-DEVICENAME       = '/dev/ttyUSB1'
+DEVICENAME       = '/dev/ttyUSB0'
 BAUDRATE         = 57600
 
 ADDR_ID                 = 7
