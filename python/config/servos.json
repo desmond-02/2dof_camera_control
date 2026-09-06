@@ -1,9 +1,9 @@
 {
   "yaw": {
     "id": 1,
-    "center_tick": 2540,
-    "min_limit": 1515,
-    "max_limit": 3542,
+    "center_tick": 2552,
+    "min_limit": 1443,
+    "max_limit": 3631,
     "reversed": true
   },
   "pitch": {
