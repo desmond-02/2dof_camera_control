@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>camera_mount_bridge</name>
+  <version>0.0.1</version>
+  <description>
+    ROS2 bridge node for the 2-DOF (yaw/pitch) Dynamixel camera mount on the G1 head.
+    Subscribes to joint_command and publishes joint_states; TF/URDF are handled by a
+    separate camera_mount_description package, added once the mount's geometry exists.
+  </description>
+  <maintainer email="desmond@eastworlds.io">Desmond</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>ament_index_python</depend>
+  <!-- The Dynamixel SDK (dynamixel-sdk on PyPI) is a pip dependency, not a rosdep key.
+       Install it into whatever Python environment runs this node (see this repo's
+       python/ README). Nothing here runs rosdep for it. -->
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
