@@ -14,6 +14,7 @@ import json
 import math
 import os
 import threading
+import time
 
 import rclpy
 from rclpy.node import Node
@@ -135,12 +136,35 @@ class CameraMountBridge(Node):
             # intentionally reclaiming the port here, so clear it first.
             self.port_handler.is_using = False
 
+            # Same interruption can also leave stale/partial bytes sitting in the OS
+            # serial receive buffer (e.g. a status packet the timer's read was cut off
+            # partway through). Left there, they corrupt the framing of the very next
+            # read -- this cleanup's own torque-disable status-packet response -- which
+            # surfaces as "Incorrect status packet!" rather than a clean result.
+            #
+            # A single immediate clear can still race a reply that was in flight on the
+            # wire (request already sent, response not yet arrived) when SIGINT hit --
+            # it can land microseconds after the clear and still corrupt the next read.
+            # Give it a moment to finish arriving, then clear, and retry on failure
+            # (clearing again each time) rather than accepting one attempt as final.
+            time.sleep(0.05)
+            self.port_handler.is_using = False
+            self.port_handler.clearPort()
+
             for name in self.enabled_joints:
                 dxl_id = self.joints[name]['id']
-                try:
-                    dxl.set_torque(self.port_handler, self.packet_handler, dxl_id, False)
-                except Exception as e:
-                    self.get_logger().error("Could not confirm torque disabled for '%s': %s" % (name, e))
+                for attempt in range(3):
+                    try:
+                        dxl.set_torque(self.port_handler, self.packet_handler, dxl_id, False)
+                        break
+                    except Exception as e:
+                        if attempt == 2:
+                            self.get_logger().error(
+                                "Could not confirm torque disabled for '%s': %s" % (name, e))
+                        else:
+                            self.port_handler.is_using = False
+                            self.port_handler.clearPort()
+                            time.sleep(0.02)
             self.port_handler.closePort()
 
 

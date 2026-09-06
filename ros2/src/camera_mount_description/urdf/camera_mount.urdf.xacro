@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<robot name="camera_mount" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- PLACEHOLDER GEOMETRY: boxes and approximate offsets standing in for the
+       OnShape design, which hasn't been exported yet. Joint names ("yaw", "pitch")
+       and joint limits are real, matching
+       ros2/src/camera_mount_bridge/config/servos.json (that copy, not python's;
+       see project notes on why the two are kept separate). If you recalibrate,
+       update the limit values below too.
+
+       Standalone for now: camera_mount_base_link is not yet attached to anything.
+       Attaching to the G1 head is a static joint once its parent link and offset
+       are known; everything below is unaffected by that. -->
+
+  <material name="mount_grey">
+    <color rgba="0.6 0.6 0.6 1.0"/>
+  </material>
+  <material name="camera_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+
+  <link name="camera_mount_base_link"/>
+
+  <link name="yaw_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.03"/>
+      </geometry>
+      <material name="mount_grey"/>
+    </visual>
+  </link>
+
+  <joint name="yaw" type="revolute">
+    <parent link="camera_mount_base_link"/>
+    <child link="yaw_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5374" upper="1.5727" effort="1.0" velocity="1.0"/>
+  </joint>
+
+  <link name="pitch_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.03"/>
+      </geometry>
+      <material name="mount_grey"/>
+    </visual>
+  </link>
+
+  <joint name="pitch" type="revolute">
+    <parent link="yaw_link"/>
+    <child link="pitch_link"/>
+    <origin xyz="0 0 0.03" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.3548" upper="0.9237" effort="1.0" velocity="1.0"/>
+  </joint>
+
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.04 0.02"/>
+      </geometry>
+      <material name="camera_black"/>
+    </visual>
+  </link>
+
+  <joint name="camera_mount_joint" type="fixed">
+    <parent link="pitch_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.03 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- REP-103 optical-frame convention (Z-forward, X-right, Y-down) for anything
+       downstream that expects it (camera_info, image_proc, vision pipelines). -->
+  <link name="camera_optical_frame"/>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.5707963 0 -1.5707963"/>
+  </joint>
+
+</robot>

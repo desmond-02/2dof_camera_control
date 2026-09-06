@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>camera_mount_bringup</name>
+  <version>0.0.1</version>
+  <description>
+    Bringup launch for the 2-DOF camera mount: camera_mount_bridge (real hardware)
+    plus robot_state_publisher (camera_mount_description's URDF), so TF is available
+    alongside live servo control.
+  </description>
+  <maintainer email="desmond@eastworlds.io">Desmond</maintainer>
+  <license>Apache-2.0</license>
+
+  <exec_depend>camera_mount_bridge</exec_depend>
+  <exec_depend>camera_mount_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
