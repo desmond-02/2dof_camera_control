@@ -8,3 +8,8 @@ __pycache__/
 dist/
 build/
 *.so
+
+# colcon (ros2/ workspace)
+ros2/build/
+ros2/install/
+ros2/log/
