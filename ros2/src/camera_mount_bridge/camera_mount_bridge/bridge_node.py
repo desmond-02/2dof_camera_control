@@ -36,7 +36,7 @@ class CameraMountBridge(Node):
         default_config = os.path.join(
             get_package_share_directory('camera_mount_bridge'), 'config', 'servos.json')
 
-        self.declare_parameter('device', '/dev/ttyUSB0')
+        self.declare_parameter('device', '/dev/dynamixel_pan_tilt')
         self.declare_parameter('baudrate', dxl.BAUDRATE)
         self.declare_parameter('servos_config_path', default_config)
         self.declare_parameter('publish_rate_hz', 30.0)

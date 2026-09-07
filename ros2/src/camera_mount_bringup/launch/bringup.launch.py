@@ -27,8 +27,8 @@ def generate_launch_description():
     rviz_config_path = os.path.join(description_share, 'rviz', 'camera_mount.rviz')
     robot_description = xacro.process_file(xacro_path).toxml()
 
-    device_arg = DeclareLaunchArgument('device', default_value='/dev/ttyUSB0')
-    rviz_arg = DeclareLaunchArgument('rviz', default_value='true')
+    device_arg = DeclareLaunchArgument('device', default_value='/dev/dynamixel_pan_tilt')
+    rviz_arg = DeclareLaunchArgument('rviz', default_value='false')
 
     return LaunchDescription([
         device_arg,
