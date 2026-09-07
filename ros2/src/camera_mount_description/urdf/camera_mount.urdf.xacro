@@ -34,13 +34,13 @@
     <!-- Link camera_mount_base_link -->
     <link name="camera_mount_base_link">
       <inertial>
-        <origin xyz="0.0186709 -5.01832e-07 0.532413" rpy="0 0 0"/>
+        <origin xyz="0.0195225 -5.01832e-07 -0.00280466" rpy="0 0 0"/>
         <mass value="0.0125893"/>
         <inertia ixx="2.85959e-06" ixy="2.39e-10" ixz="7.3616e-07" iyy="1.08803e-05" iyz="-1.5e-11" izz="1.35768e-05"/>
       </inertial>
       <!-- Part camera_mount_base_link -->
       <visual>
-        <origin xyz="0 0 0" rpy="0 -0 0"/>
+        <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 0"/>
         <geometry>
           <mesh filename="package://camera_mount_description/urdf/assets/camera_mount_base_link.stl"/>
         </geometry>
@@ -49,14 +49,14 @@
         </material>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 -0 0"/>
+        <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 0"/>
         <geometry>
           <mesh filename="package://camera_mount_description/urdf/assets/camera_mount_base_link.stl"/>
         </geometry>
       </collision>
       <!-- Part dc15_a01_case_f_dummy -->
       <visual>
-        <origin xyz="0.056648 0 0.550718" rpy="0 0 -1.5708"/>
+        <origin xyz="0.0574997 0 0.0155" rpy="0 0 -1.5708"/>
         <geometry>
           <mesh filename="package://camera_mount_description/urdf/assets/dc15_a01_case_f_dummy.stl"/>
         </geometry>
@@ -65,14 +65,14 @@
         </material>
       </visual>
       <collision>
-        <origin xyz="0.056648 0 0.550718" rpy="0 0 -1.5708"/>
+        <origin xyz="0.0574997 0 0.0155" rpy="0 0 -1.5708"/>
         <geometry>
           <mesh filename="package://camera_mount_description/urdf/assets/dc15_a01_case_f_dummy.stl"/>
         </geometry>
       </collision>
       <!-- Part base_mount -->
       <visual>
-        <origin xyz="0 0 0" rpy="0 -0 -0"/>
+        <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 -0"/>
         <geometry>
           <mesh filename="package://camera_mount_description/urdf/assets/base_mount.stl"/>
         </geometry>
@@ -81,7 +81,7 @@
         </material>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 -0 -0"/>
+        <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 -0"/>
         <geometry>
           <mesh filename="package://camera_mount_description/urdf/assets/base_mount.stl"/>
         </geometry>
@@ -164,7 +164,7 @@
     </joint>
     <!-- Joint from camera_mount_base_link to camera_mount_yaw_link -->
     <joint name="yaw" type="revolute">
-      <origin xyz="0.056648 0 0.557218" rpy="-3.14159 0 -1.5708"/>
+      <origin xyz="0.0574997 0 0.022" rpy="-3.14159 0 -1.5708"/>
       <parent link="camera_mount_base_link"/>
       <child link="camera_mount_yaw_link"/>
       <axis xyz="0 0 1"/>
@@ -180,7 +180,7 @@
          internal offsets reproduces onshape.urdf's original mesh placement exactly
          (both d455 meshes, ours and realsense2_description's, share the same local
          origin convention, confirmed by comparing STL bounding boxes: identical
-         124x26x29mm dimensions, matching center offsets to sub-mm noise). -->
+         124x26x29mm dimensions, maching center offsets to sub-mm noise). -->
     <xacro:sensor_d455 parent="camera_mount_pitch_link" name="camera" use_nominal_extrinsics="true">
       <origin xyz="0.029198 -0.0145 0.0145" rpy="-1.570796 0 0"/>
     </xacro:sensor_d455>

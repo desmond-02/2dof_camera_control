@@ -5,13 +5,13 @@
   <!-- Link camera_mount_base_link -->
   <link name="camera_mount_base_link">
     <inertial>
-      <origin xyz="0.0186709 -5.01832e-07 0.532413" rpy="0 0 0"/>
+      <origin xyz="0.0195225 -5.01832e-07 -0.00280466" rpy="0 0 0"/>
       <mass value="0.0125893"/>
       <inertia ixx="2.85959e-06" ixy="2.39e-10" ixz="7.3616e-07" iyy="1.08803e-05" iyz="-1.5e-11" izz="1.35768e-05"/>
     </inertial>
     <!-- Part camera_mount_base_link -->
     <visual>
-      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 0"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/camera_mount_base_link.stl"/>
       </geometry>
@@ -20,14 +20,14 @@
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 0"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/camera_mount_base_link.stl"/>
       </geometry>
     </collision>
     <!-- Part dc15_a01_case_f_dummy -->
     <visual>
-      <origin xyz="0.056648 0 0.550718" rpy="0 0 -1.5708"/>
+      <origin xyz="0.0574997 0 0.0155" rpy="0 0 -1.5708"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/dc15_a01_case_f_dummy.stl"/>
       </geometry>
@@ -36,14 +36,14 @@
       </material>
     </visual>
     <collision>
-      <origin xyz="0.056648 0 0.550718" rpy="0 0 -1.5708"/>
+      <origin xyz="0.0574997 0 0.0155" rpy="0 0 -1.5708"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/dc15_a01_case_f_dummy.stl"/>
       </geometry>
     </collision>
     <!-- Part base_mount -->
     <visual>
-      <origin xyz="0 0 0" rpy="0 -0 -0"/>
+      <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 -0"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/base_mount.stl"/>
       </geometry>
@@ -52,12 +52,27 @@
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 -0 -0"/>
+      <origin xyz="0.000851685 0 -0.535218" rpy="0 -0 -0"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/base_mount.stl"/>
       </geometry>
     </collision>
   </link>
+  <!-- Frame base_link (dummy link + fixed joint) -->
+  <link name="base_link">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1e-9"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+  <joint name="base_link_frame" type="fixed">
+    <origin xyz="0 0 0" rpy="0 -0 -0"/>
+    <parent link="camera_mount_base_link"/>
+    <child link="base_link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
   <!-- Link camera_mount_yaw_link -->
   <link name="camera_mount_yaw_link">
     <inertial>
@@ -83,7 +98,7 @@
     </collision>
     <!-- Part camera_mount_yaw_link -->
     <visual>
-      <origin xyz="0 0 0" rpy="-3.14159 0 0.00325227"/>
+      <origin xyz="0 0 -0" rpy="-3.14159 0 0.00325227"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/camera_mount_yaw_link.stl"/>
       </geometry>
@@ -92,7 +107,7 @@
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="-3.14159 0 0.00325227"/>
+      <origin xyz="0 0 -0" rpy="-3.14159 0 0.00325227"/>
       <geometry>
         <mesh filename="package://robot_description/camera_mount/assets/camera_mount_yaw_link.stl"/>
       </geometry>
@@ -148,7 +163,7 @@
   </joint>
   <!-- Joint from camera_mount_base_link to camera_mount_yaw_link -->
   <joint name="yaw" type="revolute">
-    <origin xyz="0.056648 0 0.557218" rpy="-3.14159 0 -1.5708"/>
+    <origin xyz="0.0574997 0 0.022" rpy="-3.14159 0 -1.5708"/>
     <parent link="camera_mount_base_link"/>
     <child link="camera_mount_yaw_link"/>
     <axis xyz="0 0 1"/>
