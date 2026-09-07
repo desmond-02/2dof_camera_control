@@ -32,8 +32,11 @@ Packages:
   ros2 topic pub /joint_command sensor_msgs/msg/JointState "{name: ['yaw'], position: [0.3]}"
   ros2 topic echo /joint_states
   ```
-- `camera_mount_description` — URDF/xacro (placeholder geometry until the OnShape design is
-  exported; joint names/limits are real). `ros2 launch camera_mount_description display.launch.py`
-  previews it with `joint_state_publisher_gui` sliders, no hardware involved.
+- `camera_mount_description` — URDF/xacro exported from the real OnShape design, with a
+  RealSense D455 attached via `realsense2_description`. See its own
+  [README](ros2/src/camera_mount_description/README.md) for how to re-sync it against a fresh
+  OnShape export, and how it attaches to a parent robot (the G1) later.
+  `ros2 launch camera_mount_description display.launch.py` previews it with
+  `joint_state_publisher_gui` sliders, no hardware involved.
 - `camera_mount_bringup` — real hardware + TF together: `ros2 launch camera_mount_bringup
   bringup.launch.py device:=/dev/ttyUSB0` (add `rviz:=true` to also open RViz).

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Bench/RViz-only entry point: instantiates the camera_mount macro under a
+     free-floating "world" root instead of a G1 head link, so display.launch.py
+     and bringup.launch.py have something to publish TF against before the mount
+     is attached to the real robot. Once attached to the G1, that robot's own
+     URDF includes camera_mount.urdf.xacro directly and this file is unused. -->
+<robot name="camera_mount_standalone" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find camera_mount_description)/urdf/camera_mount.urdf.xacro"/>
+
+  <link name="world"/>
+
+  <xacro:camera_mount parent="world">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:camera_mount>
+
+</robot>

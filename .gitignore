@@ -13,3 +13,10 @@ build/
 ros2/build/
 ros2/install/
 ros2/log/
+
+# Local symlinks to realsense-ros, only needed because this dev sandbox has no
+# sudo/apt access to install ros-humble-realsense2-description. A real deployment
+# (or any other machine) should install that package normally instead of relying
+# on these -- see ros2/README or camera_mount_description's package.xml.
+ros2/src/realsense2_camera_msgs
+ros2/src/realsense2_description

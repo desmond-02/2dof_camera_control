@@ -1,0 +1,7 @@
+{
+    "document_id": "ea88995b7abc6ca6639d5fde",
+    "output_format": "urdf",
+    "packageName": "robot_description/camera_mount",
+    "robotName": "camera_mount",
+    "assemblyName": "urdf_g1_camera_mount"
+}

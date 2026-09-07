@@ -1,0 +1,157 @@
+<?xml version="1.0" ?>
+<!-- Generated using onshape-to-robot -->
+<!-- Onshape document_id: ea88995b7abc6ca6639d5fde -->
+<robot name="camera_mount">
+  <!-- Link camera_mount_base_link -->
+  <link name="camera_mount_base_link">
+    <inertial>
+      <origin xyz="0.0186709 -5.01832e-07 0.532413" rpy="0 0 0"/>
+      <mass value="0.0125893"/>
+      <inertia ixx="2.85959e-06" ixy="2.39e-10" ixz="7.3616e-07" iyy="1.08803e-05" iyz="-1.5e-11" izz="1.35768e-05"/>
+    </inertial>
+    <!-- Part camera_mount_base_link -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/camera_mount_base_link.stl"/>
+      </geometry>
+      <material name="camera_mount_base_link_material">
+        <color rgba="0.647059 0.647059 0.647059 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/camera_mount_base_link.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part dc15_a01_case_f_dummy -->
+    <visual>
+      <origin xyz="0.056648 0 0.550718" rpy="0 0 -1.5708"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/dc15_a01_case_f_dummy.stl"/>
+      </geometry>
+      <material name="dc15_a01_case_f_dummy_material">
+        <color rgba="0.917647 0.917647 0.917647 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.056648 0 0.550718" rpy="0 0 -1.5708"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/dc15_a01_case_f_dummy.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part base_mount -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 -0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/base_mount.stl"/>
+      </geometry>
+      <material name="base_mount_material">
+        <color rgba="0.972549 0.529412 0.00392157 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 -0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/base_mount.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Link camera_mount_yaw_link -->
+  <link name="camera_mount_yaw_link">
+    <inertial>
+      <origin xyz="-4.64212e-06 0.00142735 -0.00376553" rpy="0 0 0"/>
+      <mass value="0.00610061"/>
+      <inertia ixx="6.93909e-07" ixy="-5.31e-10" ixz="-1.38e-10" iyy="8.57171e-07" iyz="4.2567e-08" izz="1.21949e-06"/>
+    </inertial>
+    <!-- Part dc15_a01_case_f_dummy_2 -->
+    <visual>
+      <origin xyz="-0.00794467 -0.0170259 -0.013" rpy="3.13834 1.5708 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/dc15_a01_case_f_dummy.stl"/>
+      </geometry>
+      <material name="dc15_a01_case_f_dummy_2_material">
+        <color rgba="0.917647 0.917647 0.917647 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.00794467 -0.0170259 -0.013" rpy="3.13834 1.5708 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/dc15_a01_case_f_dummy.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part camera_mount_yaw_link -->
+    <visual>
+      <origin xyz="0 0 0" rpy="-3.14159 0 0.00325227"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/camera_mount_yaw_link.stl"/>
+      </geometry>
+      <material name="camera_mount_yaw_link_material">
+        <color rgba="0.615686 0.811765 0.929412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="-3.14159 0 0.00325227"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/camera_mount_yaw_link.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Link camera_mount_pitch_link -->
+  <link name="camera_mount_pitch_link">
+    <inertial>
+      <origin xyz="0.0153805 0 0.0124131" rpy="0 0 0"/>
+      <mass value="0.013697"/>
+      <inertia ixx="1.29622e-05" ixy="-0" ixz="-3.20967e-07" iyy="1.28138e-05" iyz="-0" izz="8.57555e-07"/>
+    </inertial>
+    <!-- Part d455 -->
+    <visual>
+      <origin xyz="0.0449975 0 0.0145" rpy="-0 1.5708 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/d455.stl"/>
+      </geometry>
+      <material name="d455_material">
+        <color rgba="0.792157 0.819608 0.933333 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0449975 0 0.0145" rpy="-0 1.5708 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/d455.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part camera_mount_pitch_link -->
+    <visual>
+      <origin xyz="0.0189975 0 0.0145" rpy="-1.5708 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/camera_mount_pitch_link.stl"/>
+      </geometry>
+      <material name="camera_mount_pitch_link_material">
+        <color rgba="0.615686 0.811765 0.929412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0189975 0 0.0145" rpy="-1.5708 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://robot_description/camera_mount/assets/camera_mount_pitch_link.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Joint from camera_mount_yaw_link to camera_mount_pitch_link -->
+  <joint name="pitch" type="revolute">
+    <origin xyz="-0.0144446 -0.0170471 -0.013" rpy="-1.5708 0.0247295 -1.56754"/>
+    <parent link="camera_mount_yaw_link"/>
+    <child link="camera_mount_pitch_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10" lower="-3.141592653589793" upper="3.141592653589793"/>
+  </joint>
+  <!-- Joint from camera_mount_base_link to camera_mount_yaw_link -->
+  <joint name="yaw" type="revolute">
+    <origin xyz="0.056648 0 0.557218" rpy="-3.14159 0 -1.5708"/>
+    <parent link="camera_mount_base_link"/>
+    <child link="camera_mount_yaw_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10" lower="-3.141592653589793" upper="3.141592653589793"/>
+  </joint>
+</robot>
