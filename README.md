@@ -97,9 +97,10 @@ servos or U2D2 unit themselves ever change — everything else is one-time per m
    ros2 launch camera_mount_bringup bringup.launch.py rviz:=true
    ```
    Should work with no `device:=` override (thanks to step 4), home both joints to center,
-   and show correct TF/RViz. Test a move:
+   and show correct TF/RViz. Test a move, in degrees, with `send_angle` (see "Packages"
+   below):
    ```bash
-   ros2 topic pub /joint_command sensor_msgs/msg/JointState "{name: ['yaw'], position: [0.3]}"
+   ros2 run camera_mount_bridge send_angle yaw 0 pitch 0
    ros2 topic echo /joint_states
    ```
 8. **(later, separate task) Attach to this robot's own URDF.** Steps 1–7 get you a working
@@ -119,10 +120,17 @@ only provides geometry and TF, not a running camera driver.
 - `camera_mount_bridge` — talks to the real servos. `ros2 run camera_mount_bridge bridge_node`
   (defaults to `/dev/dynamixel_pan_tilt` — see step 4 above; override with
   `--ros-args -p device:=/dev/ttyUSBx` if that symlink isn't installed) (also homes both
-  joints to center on startup). Test with no URDF/TF/RViz needed:
+  joints to center on startup). Command it with `send_angle` (degrees, not radians —
+  `/joint_command` itself stays radians, this just converts for you), one or both joints
+  at once:
+  ```
+  ros2 run camera_mount_bridge send_angle yaw 50 pitch -20
+  ros2 run camera_mount_bridge send_angle yaw 0 pitch 0   # back to center
+  ros2 topic echo /joint_states
+  ```
+  or publish to `/joint_command` directly if you need raw radians:
   ```
   ros2 topic pub /joint_command sensor_msgs/msg/JointState "{name: ['yaw'], position: [0.3]}"
-  ros2 topic echo /joint_states
   ```
 - `camera_mount_description` — URDF/xacro exported from the real OnShape design, with a
   RealSense D455 attached via `realsense2_description`. See its own
