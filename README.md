@@ -2,6 +2,12 @@
 
 2-DOF (yaw/pitch) Dynamixel camera mount for the Unitree G1 head.
 
+<p align="center">
+  <img src="docs/images/cad_render.png" alt="CAD render of the camera mount on the G1 head" height="320">
+  <img src="docs/images/mounted_on_g1.jpg" alt="Assembled camera mount on the robot" height="320">
+</p>
+<p align="center"><em>Left: OnShape CAD model. Right: assembled mount on the robot.</em></p>
+
 - `python/` — standalone hardware tools: servo ID assignment, calibration, and CLI angle control. No ROS dependency.
 - `ros2/` — ROS2 (Humble) workspace for controlling the mount over topics.
 
