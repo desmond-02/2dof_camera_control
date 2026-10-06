@@ -1,16 +1,16 @@
 {
   "yaw": {
     "id": 1,
-    "center_tick": 1528,
-    "min_limit": 272,
-    "max_limit": 2730,
-    "reversed": true
+    "center_tick": 1541,
+    "min_limit": 901,
+    "max_limit": 2091,
+    "reversed": false
   },
   "pitch": {
     "id": 2,
-    "center_tick": 3341,
-    "min_limit": 2263,
-    "max_limit": 4073,
+    "center_tick": 3300,
+    "min_limit": 2660,
+    "max_limit": 4080,
     "reversed": true
   }
 }
