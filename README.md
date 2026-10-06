@@ -109,7 +109,17 @@ servos or U2D2 unit themselves ever change — everything else is one-time per m
    ros2 run camera_mount_bridge send_angle yaw 0 pitch 0
    ros2 topic echo /joint_states
    ```
-8. **(later, separate task) Attach to this robot's own URDF.** Steps 1–7 get you a working
+8. **Run on every boot** with [`systemd/comp-cap.service`](systemd/comp-cap.service) (edit
+   its paths and `home_*_deg` for this robot first):
+   ```bash
+   mkdir -p ~/comp_cap_logs
+   sudo cp systemd/comp-cap.service /etc/systemd/system/
+   sudo systemctl daemon-reload && sudo systemctl enable --now comp-cap.service
+   ```
+   It retries every 5 s until the U2D2 and both servos answer (so a late USB enumeration
+   or servo supply at boot is fine), restarts the bring-up if `bridge_node` exits or a
+   servo drops off the bus, and logs to `~/comp_cap_logs/bringup.log`.
+9. **(later, separate task) Attach to this robot's own URDF.** Steps 1–7 get you a working
    mount reporting TF against a placeholder `world` root, same as any dev machine. Actually
    attaching it to a real robot (so its head motion carries the camera along) means
    measuring the offset from that robot's head/torso link to `camera_mount_base_link`, then
@@ -126,7 +136,12 @@ only provides geometry and TF, not a running camera driver.
 - `camera_mount_bridge` — talks to the real servos. `ros2 run camera_mount_bridge bridge_node`
   (defaults to `/dev/dynamixel_pan_tilt` — see step 4 above; override with
   `--ros-args -p device:=/dev/ttyUSBx` if that symlink isn't installed) (also homes both
-  joints to center on startup). Command it with `send_angle` (degrees, not radians —
+  joints on startup, to `home_yaw_deg`/`home_pitch_deg`, default center). It runs the servos
+  in Extended Position Mode and corrects for whole encoder turns at startup, so a joint
+  whose travel crosses the encoder's 4095→0 wrap (e.g. a pitch down stop near tick 4095)
+  still homes the short way; a joint starting more than 15° outside its calibrated range is
+  left limp as a sign that `servos.json` doesn't match the hardware. Command it with
+  `send_angle` (degrees, not radians —
   `/joint_command` itself stays radians, this just converts for you), one or both joints
   at once:
   ```

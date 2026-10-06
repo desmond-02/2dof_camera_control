@@ -1,0 +1,38 @@
+# /etc/systemd/system/comp-cap.service
+[Unit]
+# comp_cap (2dof_camera_control, formerly ~/CodeSpace) pan/tilt camera mount
+# bring-up: robot_state_publisher + camera_mount_bridge, talking to the real
+# Dynamixel servos over /dev/dynamixel_pan_tilt (udev-pinned, see the repo's
+# README). Homes to yaw=0, pitch=-65 deg on every boot via bridge_node.py's
+# home_yaw_deg/home_pitch_deg parameters -- /joint_command still accepts
+# runtime overrides afterward, this only sets the boot-time default.
+Description=comp_cap camera mount bring-up (camera_mount_bridge)
+After=network-online.target
+Wants=network-online.target
+# Never stop retrying: at boot the U2D2 or the servos' 12 V supply may come up
+# late, and bridge_node exits (ending the launch) until both answer.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=unitree
+Group=unitree
+# always, not on-failure: what matters is that the bring-up ended, not how
+# ros2 launch chose to report it.
+Restart=always
+RestartSec=5
+# rclpy's own signal handling reacts to SIGINT (KeyboardInterrupt), not the
+# default SIGTERM -- KillSignal keeps `systemctl stop`/restart on the same
+# graceful shutdown path (torque-disable, clean port close) as Ctrl+C.
+KillSignal=SIGINT
+# Signal only ros2 launch, which forwards SIGINT to its nodes itself. The
+# default (control-group) also hit every node directly, so each got SIGINT
+# twice and the second interrupted bridge_node's torque-disable.
+KillMode=mixed
+WorkingDirectory=/home/unitree/comp_cap/2dof_camera_control/ros2
+ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source /home/unitree/comp_cap/2dof_camera_control/ros2/install/setup.bash && exec ros2 launch camera_mount_bringup bringup.launch.py home_yaw_deg:=0.0 home_pitch_deg:=-65.0'
+StandardOutput=append:/home/unitree/comp_cap_logs/bringup.log
+StandardError=append:/home/unitree/comp_cap_logs/bringup.log
+
+[Install]
+WantedBy=multi-user.target

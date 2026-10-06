@@ -17,6 +17,7 @@ from dynamixel_sdk import PortHandler, PacketHandler, COMM_SUCCESS
 PROTOCOL_VERSION = 2.0
 BAUDRATE = 57600
 
+ADDR_OPERATING_MODE       = 11
 ADDR_TORQUE_ENABLE        = 64
 ADDR_GOAL_POSITION        = 116
 ADDR_PRESENT_POSITION     = 132
@@ -28,8 +29,11 @@ ADDR_PROFILE_VELOCITY     = 112
 TORQUE_ENABLE  = 1
 TORQUE_DISABLE = 0
 
-POSITION_MAX  = 4095   # one full revolution
-ANGLE_MAX_DEG = 360.0
+EXTENDED_POSITION_MODE = 4
+
+POSITION_MAX   = 4095   # one full revolution
+TICKS_PER_TURN = POSITION_MAX + 1
+ANGLE_MAX_DEG  = 360.0
 
 
 def connect(devicename, baudrate=BAUDRATE):
@@ -78,17 +82,50 @@ def set_torque(port_handler, packet_handler, dxl_id, enable):
         raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getRxPacketError(error)))
 
 
+def ensure_extended_position_mode(port_handler, packet_handler, dxl_id):
+    """Put dxl_id in Extended Position Control Mode. Returns True if the mode had to
+    change -- Operating Mode is EEPROM, writable only with torque off, so torque is
+    dropped first in that case (the joint goes limp until re-enabled)."""
+    mode, comm_result, error = packet_handler.read1ByteTxRx(port_handler, dxl_id, ADDR_OPERATING_MODE)
+    if comm_result != COMM_SUCCESS:
+        raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getTxRxResult(comm_result)))
+    if mode == EXTENDED_POSITION_MODE:
+        return False
+    set_torque(port_handler, packet_handler, dxl_id, False)
+    comm_result, error = packet_handler.write1ByteTxRx(
+        port_handler, dxl_id, ADDR_OPERATING_MODE, EXTENDED_POSITION_MODE)
+    if comm_result != COMM_SUCCESS:
+        raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getTxRxResult(comm_result)))
+    if error != 0:
+        raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getRxPacketError(error)))
+    return True
+
+
+def turn_offset(joint, raw_tick):
+    """Whole-turn shift (a multiple of TICKS_PER_TURN) that puts raw_tick nearest the
+    joint's calibrated center_tick, i.e. calibrated_tick = raw_tick + turn_offset.
+
+    The encoder reports a single turn (0..4095) at power-on, so a joint whose travel
+    straddles the 4095->0 wrap (this mount's pitch: down stop at ~4089-4106) can read
+    a full turn away from its calibrated ticks -- e.g. 5 instead of 4101. Taking the
+    nearest-to-center representation is unambiguous as long as the travel spans less
+    than a full turn around center, which any real joint here does."""
+    return int(round((joint['center_tick'] - raw_tick) / TICKS_PER_TURN)) * TICKS_PER_TURN
+
+
 def read_present_position(port_handler, packet_handler, dxl_id):
     position, comm_result, error = packet_handler.read4ByteTxRx(port_handler, dxl_id, ADDR_PRESENT_POSITION)
     if comm_result != COMM_SUCCESS:
         raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getTxRxResult(comm_result)))
     if error != 0:
         raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getRxPacketError(error)))
-    return position
+    # Signed 32-bit: Extended Position Mode can report positions below 0.
+    return position - (1 << 32) if position & (1 << 31) else position
 
 
 def write_goal_position(port_handler, packet_handler, dxl_id, tick):
-    comm_result, error = packet_handler.write4ByteTxRx(port_handler, dxl_id, ADDR_GOAL_POSITION, tick)
+    comm_result, error = packet_handler.write4ByteTxRx(
+        port_handler, dxl_id, ADDR_GOAL_POSITION, tick & 0xFFFFFFFF)
     if comm_result != COMM_SUCCESS:
         raise RuntimeError('[ID:%d] %s' % (dxl_id, packet_handler.getTxRxResult(comm_result)))
     if error != 0:

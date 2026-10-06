@@ -21,7 +21,7 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, Shutdown
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -69,6 +69,10 @@ def generate_launch_description():
                 'home_yaw_deg': ParameterValue(LaunchConfiguration('home_yaw_deg'), value_type=float),
                 'home_pitch_deg': ParameterValue(LaunchConfiguration('home_pitch_deg'), value_type=float),
             }],
+            # bridge_node is the bring-up: without it the other nodes keep running and
+            # the launch (so comp-cap.service) looks healthy while nothing drives the
+            # servos. End the whole launch instead, so systemd's Restart= retries.
+            on_exit=Shutdown(reason='bridge_node exited'),
         ),
         Node(
             package='rviz2',
