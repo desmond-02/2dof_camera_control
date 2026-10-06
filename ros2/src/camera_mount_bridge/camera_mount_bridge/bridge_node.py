@@ -42,6 +42,8 @@ class CameraMountBridge(Node):
         self.declare_parameter('publish_rate_hz', 30.0)
         self.declare_parameter('profile_velocity', 60)
         self.declare_parameter('profile_acceleration', 20)
+        self.declare_parameter('home_yaw_deg', 0.0)
+        self.declare_parameter('home_pitch_deg', 0.0)
 
         device = self.get_parameter('device').value
         baudrate = self.get_parameter('baudrate').value
@@ -49,6 +51,10 @@ class CameraMountBridge(Node):
         publish_rate_hz = self.get_parameter('publish_rate_hz').value
         profile_velocity = self.get_parameter('profile_velocity').value
         profile_acceleration = self.get_parameter('profile_acceleration').value
+        home_angles_deg = {
+            'yaw': self.get_parameter('home_yaw_deg').value,
+            'pitch': self.get_parameter('home_pitch_deg').value,
+        }
 
         with open(config_path) as f:
             self.joints = json.load(f)  # name -> {id, center_tick, min_limit, max_limit, reversed}
@@ -74,10 +80,20 @@ class CameraMountBridge(Node):
             self.get_logger().info(
                 "'%s' (ID %d) ready. Allowed range: %.1f to %.1f deg" % (name, dxl_id, low, high))
 
-            # Home to center on startup -- non-blocking, same as any other commanded
-            # move: joint_states reports the approach as it happens, nothing here waits
-            # for it to arrive.
-            dxl.write_goal_position(self.port_handler, self.packet_handler, dxl_id, joint['center_tick'])
+            # Home to the configured position on startup (home_yaw_deg/home_pitch_deg,
+            # default 0.0 = center) -- non-blocking, same as any other commanded move:
+            # joint_states reports the approach as it happens, nothing here waits for it
+            # to arrive. Out-of-range configured home falls back to center rather than
+            # silently clamping to the limit, same reasoning as on_joint_command's warn.
+            home_deg = home_angles_deg[name]
+            if home_deg < low - RANGE_TOLERANCE_DEG or home_deg > high + RANGE_TOLERANCE_DEG:
+                self.get_logger().error(
+                    "Configured home for '%s' (%.1f deg) is out of range [%.1f, %.1f] -- homing to center instead" %
+                    (name, home_deg, low, high))
+                home_tick = joint['center_tick']
+            else:
+                home_tick = dxl.angle_to_tick(joint, home_deg)
+            dxl.write_goal_position(self.port_handler, self.packet_handler, dxl_id, home_tick)
 
         self.command_sub = self.create_subscription(
             JointState, 'joint_command', self.on_joint_command, 10)

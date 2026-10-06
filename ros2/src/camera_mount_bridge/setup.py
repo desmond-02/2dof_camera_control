@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'bridge_node = camera_mount_bridge.bridge_node:main',
             'send_angle = camera_mount_bridge.send_angle:main',
+            'neck_zmq_bridge = camera_mount_bridge.neck_zmq_bridge:main',
         ],
     },
 )
