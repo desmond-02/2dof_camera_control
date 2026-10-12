@@ -19,7 +19,7 @@ import threading
 import time
 
 import rclpy
-from rclpy.executors import ExternalShutdownException
+from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
 from rclpy.logging import get_logger
 from rclpy.node import Node
 from ament_index_python.packages import get_package_share_directory
@@ -205,9 +205,14 @@ class CameraMountBridge(Node):
         # Exit non-zero and let systemd restart the whole bring-up: a fresh start
         # re-checks the servos, re-derives turn offsets and re-homes -- the only
         # sound recovery once a servo has dropped off the bus or rebooted.
+        #
+        # Only flag the fault here; main()'s spin loop sees it and shuts down outside
+        # any callback. Shutting the context down from inside this (timer) callback
+        # deadlocks: rclpy's shutdown hook waits for the executor's in-flight
+        # callbacks to finish, this one included -- the process hung forever and
+        # comp-cap.service never restarted (2026-10-12).
         self.fault = reason
         self.get_logger().error('%s -- shutting down so comp-cap.service restarts the bring-up' % reason)
-        self.context.try_shutdown()
 
     def shutdown(self):
         # Idempotent (and thread-safe): called from context.on_shutdown() (the reliable
@@ -281,11 +286,18 @@ def main(args=None):
             rclpy.shutdown()
         sys.exit(1)
     node.context.on_shutdown(node.shutdown)
+    # A private executor, not rclpy.spin()'s global one: rclpy's own shutdown hook
+    # waits for the global executor's in-flight callbacks, so a shutdown landing
+    # mid-callback could hang this process again (see _fail).
+    executor = SingleThreadedExecutor()
+    executor.add_node(node)
     try:
-        rclpy.spin(node)
+        while rclpy.ok() and not node.fault:
+            executor.spin_once(timeout_sec=0.1)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
+        executor.shutdown(timeout_sec=1.0)
         node.shutdown()
         node.destroy_node()
         if rclpy.ok():
