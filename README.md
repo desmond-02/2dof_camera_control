@@ -61,11 +61,17 @@ servos or U2D2 unit themselves ever change — everything else is one-time per m
    Then install the rule with those values (needs `sudo`):
    ```bash
    sudo tee /etc/udev/rules.d/99-dynamixel-pan-tilt.rules > /dev/null <<'EOF'
-   SUBSYSTEM=="tty", ATTRS{idVendor}=="<paste>", ATTRS{idProduct}=="<paste>", ATTRS{serial}=="<paste>", SYMLINK+="dynamixel_pan_tilt", MODE="0666", GROUP="dialout"
+   SUBSYSTEM=="tty", ATTRS{idVendor}=="<paste>", ATTRS{idProduct}=="<paste>", ATTRS{serial}=="<paste>", SYMLINK+="dynamixel_pan_tilt", OWNER="unitree", GROUP="dialout", MODE="0600"
    EOF
    sudo udevadm control --reload-rules
    sudo udevadm trigger
    ```
+   `OWNER` is the user `comp-cap.service` runs as. The port is private to it (`0600`) so
+   nothing else opens it by accident: another process reopening it at a different baud
+   rate knocks the servos off the bus. On the G1 this is what keeps BrainCo's
+   `brainco_hand_server`, which probes every `/dev/ttyUSB*` for hands, away from the
+   neck; its systemd drop-in removes `CAP_DAC_OVERRIDE`, so even as root it cannot open
+   a `0600` node it doesn't own.
    If `/dev/dynamixel_pan_tilt` doesn't appear right away, unplug and replug the U2D2 (some
    systems only apply a newly-added rule on the next USB enumeration event). Verify it
    worked:
